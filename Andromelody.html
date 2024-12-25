@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<style> body { background-image: url('Andromelody.jpg');} 
+
+</style>
+
+
+
+
+<html lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andromelody</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f;
+            color: #ffffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        header {
+            font-size: 2em;
+            margin-bottom: 25px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="text"], select {
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .music-result {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>Welcome to Andromelody!</header>
+    <form id="music-form">
+        <label for="mood">How are you feeling right now?</label>
+        <input type="text" id="mood" name="mood" placeholder="e.g., happy, stressed, tired">
+        <button type="submit">Get Music Recommendation</button>
+    </form>
+    <div id="music-result" class="music-result"></div>
+
+    <script>
+        const form = document.getElementById('music-form');
+const resultDiv = document.getElementById('music-result');
+
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const mood = document.getElementById('mood').value.trim().toLowerCase(); // Convert input to lowercase
+
+    if (!mood) {
+        resultDiv.textContent = "Please enter your mood or situation.";
+        return;
+    }
+
+    resultDiv.textContent = "Finding the perfect music for you...";
+
+    // Simulated backend response based on mood
+    const recommendations = {
+        happy: { message: "I'm so glad you're feeling happy! You deserve all the joy in the world.", song: "'Happy' by Pharrell Williams" },
+        stressed: { message: "I'm sorry you're feeling so stressed. Take a deep breath—I'm here to support you if you need anything.", song: "'Weightless' by Marconi Union" },
+        heartbroken: { message: "It must be so painful to feel heartbroken. I'm really sorry you're going through this, and I'm here for you.", song: "'Someone Like You' by Adele" },
+        relaxed: { message: "I'm glad to see you so relaxed. You've earned this moment of peace—enjoy it!", song: "'Sunsetz' by Cigarettes After Sex" },
+        energetic: { message: "You're so full of energy—it's great to see you feeling this way! Channel it into something amazing.", song: "'Counting Stars' by One Direction" },
+        depressed: { message: "I'm sorry you're feeling this way. This song might resonate with you:", song: "'Romantic Homocide' by d4vd" },
+        ecstatic: { message: "I'm so happy for you! It's amazing to feel that way.", song: "'Industry Baby' by Lil Nas X" },
+        euphoric: { message: "That's wonderful! You deserve to feel that amazing!", song: "'Euphoria' by Kendrick Lamar" },
+        content: { message: "I'm glad you're at peace. It's great to feel content.", song: "'Bound 2' by Kanye West" },
+        cheerful: { message: "Your positivity is contagious! I love seeing you so cheerful.", song: "'The Nights' by Avicii" },
+        joyful: { message: "It's beautiful to see you so joyful. You've earned that happiness.", song: "'Waiting For Love' by Avicii" },
+        delighted: { message: "I'm so glad you're feeling delighted! It must feel so good.", song: "'Take Care' by Beach House" },
+        elated: { message: "What fantastic news! You must be on cloud nine.", song: "'Alone' by Marshmellow" },
+        optimistic: { message: "Your optimism is inspiring. It's great to see you so hopeful.", song: "'Sweet Child O' Mine' by Guns N' Roses" },
+        grateful: { message: "It's heartwarming to see how grateful you are. That kind of perspective is truly special.", song: "'Beautiful Things' by Benson Boone" },
+        hopeful: { message: "I admire your hopefulness. It gives you strength through anything.", song: "'Hall of Fame' by The Script" },
+        radiant: { message: "You look absolutely radiant! I can feel your happiness shining.", song: "'Believer' by Imagine Dragons" },
+        proud: { message: "You've earned that pride! You should feel proud of yourself.", song: "'A Sky Full of Stars' by Coldplay" },
+        confident: { message: "It's wonderful to see you so confident. Keep believing in yourself.", song: "'Warrios' by Imagine Dragons" },
+        excited: { message: "Your excitement is contagious! I'm excited for you!", song: "'Stereo Hearts' by Gym Class Heroes" },
+        pleasant: { message: "I'm so glad you're in such a pleasant mood. It makes everything feel lighter.", song: "'Chateau' by Djo" },
+        merry: { message: "You have such a merry spirit. It's great to see you so full of joy.", song: "'Here We Go Again' by The Neighbourhood" },
+        gracious: { message: "Your graciousness is truly beautiful. You make everyone feel so welcomed.", song: "'Sleep Well' by d4vd" },
+        melancholic: { message: "I'm sorry you're feeling so melancholic. It can be tough to shake off that sadness.", song: "'Vas' by jagger finn" },
+        despondent: { message: "It hurts to see you feeling so despondent. If you need anything, I'm here.", song: "'Revenge' by XXXTENTACION" },
+        sorrowful: { message: "I can feel your sorrow, and I'm so sorry you're going through this. I'm here for you.", song: "'i was all over her' by salvia palth" },
+        mournful: { message: "I see that you're feeling mournful, and I'm truly sorry. Take all the time you need to heal.", song: "'This feeling Will Pass' by Take Care" },
+        downcast: { message: "I'm really sorry to see you downcast. If you need to talk, I'm here.", song: "'Youngest Daughter' by Superheaven" },
+        gloomy: { message: "It seems like you're feeling gloomy. I hope things start to look brighter soon.", song: "'Cats, Cats and Cats Again' by Cosmic Child" },
+        somber: { message: "It's hard to see you so somber. Please know you don't have to go through it alone.", song: "'death bed' by Powfu" },
+        disheartened: { message: "I'm so sorry you feel disheartened. It's okay to feel that way sometimes.", song: "'Losing Interest' by Stract" },
+        lonely: { message: "It must be really tough to feel this lonely. I'm here if you want some company.", song: "'welcome and goodbye' by Dream" },
+        hopeless: { message: "I know it can feel hopeless right now. But I believe in you and your strength.", song: "'Tejano Blue' by Cigarettes After Sex" },
+        forlorn: { message: "You seem so forlorn, and I wish I could do more to help. Let me know if you need anything.", song: "'Not Gonna Hurt You Baby ' by Cigarettes After Sex" },
+        blue: { message: "I can tell you're feeling blue. It's tough, but I'm here for you.", song: "'Cry' by Cigarettes After Sex" },
+        pessimistic: { message: "It's hard to stay positive when things feel so bleak. I'm here to help lift your spirits.", song: "'Night We Met' by Lord Huron" },
+        furious: { message: "I can see how furious you are. It's okay to feel that way, but let me know if you need to talk about it.", song: "'Sailor Song' by Gigi Perez" },
+        irritated: { message: "I understand that you're irritated. That must be really frustrating.", song: "'Fade Into You' by Mazzy Star" },
+        enraged: { message: "I can feel how enraged you are. It's a lot to handle, but I'm here to listen if you need.", song: "'someday i'll get it' by Alek Olsen" },
+        fuming: { message: "You seem fuming right now. I get why, but take a deep breath when you can.", song: "'i walk this earth by myself' by EKKSTACY" },
+        infuriated: { message: "I can tell you're infuriated. It's hard to stay calm when everything feels so unfair.", song: "'String Lights' by Peter Mcpoland" },
+        vexed: { message: "It sounds like you're really vexed. I'm sorry things have been so annoying", song: "'Next Exit' by Vacations" },
+        annoyed: { message: "I hear you, you're annoyed. That must be really frustrating.", song: "'Freaks' by Surf Curse" },
+        outraged: { message: "I'm sorry you're feeling outraged. It's tough when things don't seem right.", song: "'The Less I Know The Better' by Tame Impala" },
+        agitated: { message: "You seem agitated. Take some time to cool off if you can.", song: "'Ophelia' by The Lumineers" },
+        exasperated: { message: "I see you're exasperated. I wish things would get easier for you.", song: "'Dark Red' by Steve Lacy" },
+        livid: { message: "You're absolutely livid, and I understand why. It's tough to control that kind of anger.", song: "'Shit Show' by Peter Mcpoland" },
+        wrathful: { message: "Your wrath is understandable. I hope you find a way to express it peacefully.", song: "'Vices' by Sarah and the Sundays" },
+        indignant: { message: "You have every right to feel indignant. It's hard when things feel so unfair.", song: "'Dead Air' by Peter Mcpoland" },
+        seething: { message: "I can feel the seething anger in you. Take a moment to breathe, I'm here for you.", song: "'Sleep On The Floor' by The Lumineers" },
+        terrified: { message: "It must be terrifying to feel that way. I'm here for you if you need support.", song: "'Would That I' by Hozier" },
+        anxious: { message: "I know anxiety can be overwhelming. Take deep breaths, I'm here for you.", song: "'Holy Roller' by Zach Bryan" },
+        fearful: { message: "It's tough to feel fearful. You're not alone in this, and I hope things improve soon.", song: "'Coffee Cups and Cigarettes' by Tomo" },
+        panicked: { message: "Feeling panicked can be so intense. Try to breathe deeply, and don't hesitate to reach out for support.", song: "'The Sound Of Silence' by Simon & Garfunkel" },
+        nervous: { message: "It's okay to feel nervous. You've got this! Just take things one step at a time.", song: "'Dreamers' by Jungkook" },
+        worried: { message: "I understand how worrying things can be. I hope things get better soon.", song: "'Rewrite The Stars' by James Arthur" },
+        unsettled: { message: "It's difficult when you feel unsettled. Take a moment to calm your mind.", song: "'Viva La Vida' by Coldplay" },
+        uncertain: { message: "It's okay to feel uncertain. You'll find your way, and I'm here to support you.", song: "'C'est La Vie' by Khaled" },
+        unsure: { message: "It's understandable to feel unsure. Take time to reflect, things will become clearer.", song: "'Chandelier' by Sia" },
+        restless: { message: "Restlessness can be so exhausting. I hope you find peace soon.", song: "'Something Just Like This' by The Chainsmokers" },
+        peaceful: { message: "It's wonderful to feel peaceful. Take this moment to enjoy the calm.", song: "'Those Eyes' by New West" },
+        lazy: { message: "Sometimes it's okay to take it slow—you probably need the break.", song: "'Calm Down' by Rema" },
+        tired: { message: "You've been pushing yourself hard—rest is well-deserved", song: "'Here With Me' by d4vd" },
+        exhausted: { message: "You've carried so much; I hope you find the peace to recharge.", song: "'could cry just thinkin about you' by Troye Sivan" },
+        sleepy: { message: "Drift off and let the world wait—you've earned this quiet moment.", song: "'j's lullaby' by Delaney Bailey" },
+        miserable: { message: "That heavy sadness feels endless, but you're not alone in it.", song: "'Unity' by The Walkers" },
+        angry: { message: "Your frustration is valid—I hope you find a way to release it constructively.", song: "'Scott Street' by Phoebe Bridgers" },
+        goofy: { message: "Your playful energy is infectious; don't ever lose that spark.", song: "'Thunder' by Gabry Ponte" },
+        hyped: { message: "Your excitement is a joy to see—embrace the moment fully.", song: "'Sky High' by Elektronomia" },
+        silly: { message: "Your lightheartedness is a breath of fresh air—keep spreading joy.", song: "'Nevada' by Vicetone" },
+        constipated: { message: "That discomfort is tough—I hope relief comes soon.", song: "'Vision' by Elektronomia" },
+        amazing: { message: "Your brilliance shines so brightly—never doubt your worth.", song: "'Mary On A Cross' by Ghost" },
+        lively: { message: "Your energy lights up the room—what a gift you are to others.", song: "'Titanium' by David Guetta" },
+        bored: { message: "That sense of restlessness can be draining—I hope you find something that excites you soon.", song: "'Centuries' by Fall Out Boy" },
+        monotonous: { message: "Repetition can feel stifling; I hope a spark of variety brightens your day.", song: "'100 Bad Days' by AJR" }
+
+    };
+
+            const recommendation = recommendations[mood.toLowerCase()];
+
+            if (recommendation) {
+                resultDiv.innerHTML = `<p>${recommendation.message}</p><p>Try listening to: ${recommendation.song}</p>`;
+            } else {
+                resultDiv.textContent = "Oops! It looks like something went wrong. Please check and try again.";
+            }
+        });
+    </script>
+    <style>
+        body {
+        background-size: cover; /* Ensures the image covers the whole viewport */
+        background-position: center; /* Centers the image */
+        background-attachment: fixed; /* Keeps the background fixed while scrolling */
+        margin: 0; /* Removes default margin */
+        height: 100vh
+        }
+</body>
+</html>
